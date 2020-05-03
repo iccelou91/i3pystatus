@@ -224,7 +224,9 @@ https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html
         properties = dbus.Interface(self.get_player(), Dbus.intf_props)
         try:
             return properties.Get(Dbus.intf_player, name)
-        except dbus.exceptions.DBusException:
+        except dbus.exceptions.DBusException as e:
+            if e.get_dbus_name() == 'com.github.altdesktop.playerctld.NoActivePlayer':
+                raise NoPlayerException()
             return default
 
     def set_player_prop(self, name, value):
